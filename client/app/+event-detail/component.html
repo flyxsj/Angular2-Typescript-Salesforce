@@ -1,0 +1,237 @@
+<md-content>
+  <div class="back-to-list">
+    <a [routerLink]="['/']">Back to Event List</a>
+  </div>
+  <div class="event-base-info">
+    <h3>Event Base Information<a (click)="showEditingEvent();" *ngIf="!editingEvent && isAdmin()">Edit</a></h3>
+
+    <div class="card-container" *ngIf="!editingEvent">
+      <md-card class="event entity-card" style="width:100%;box-shadow: none;">
+        <md-card-title class="label-title">{{storedEvent.mineentry__title__c}}</md-card-title>
+        <md-card-content class="secondary">
+          <p><label>Status: </label><span class="status-{{storedEvent.mineentry__status__c}}">{{storedEvent.mineentry__status__c | statusLabel}}</span></p>
+
+          <div class="clearfix">
+            <div class="col-sm-6">
+              <label>Start: </label>{{storedEvent.mineentry__start__c | sfDateFormat}}
+            </div>
+            <div class="col-sm-6">
+              <label>End: </label>{{storedEvent.mineentry__end__c | sfDateFormat}}
+            </div>
+          </div>
+          <div class="clearfix">
+            <div class="col-sm-6">
+              <label>Registration Limit: </label>{{storedEvent.mineentry__reglimit__c}}
+            </div>
+            <div class="col-sm-6">
+              <label>Remaining Seats: </label>{{storedEvent.mineentry__remainingseats__c}}
+            </div>
+          </div>
+          <p><label>Description: </label>{{storedEvent.mineentry__description__c}}</p>
+        </md-card-content>
+      </md-card>
+    </div>
+    <md-card class="create-entity-card" *ngIf="editingEvent">
+      <md-card-content>
+        <form>
+          <md-input name="title" maxLength="200" type="text" placeholder="Title" (input)="eventFormErrorText = ''" [(ngModel)]="event.mineentry__title__c"></md-input>
+          <div class="clearfix cols-2">
+            <my-date-time-input [labelText]="eventStartDTInfo.label" [selectedDate]="eventStartDTInfo.date" [selectedHour]="eventStartDTInfo.hour" [selectedMin]="eventStartDTInfo.min" (dateTimeChanged)="eventDateTimeChanged($event,'start');"></my-date-time-input>
+            <my-date-time-input [labelText]="eventEndDTInfo.label" [selectedDate]="eventEndDTInfo.date" [selectedHour]="eventEndDTInfo.hour" [selectedMin]="eventEndDTInfo.min" (dateTimeChanged)="eventDateTimeChanged($event,'end');"></my-date-time-input>
+          </div>
+          <div class="clearfix cols-2">
+            <md-input name="regLimit" type="number" placeholder="Registration Limit" (input)="eventFormErrorText = ''" [(ngModel)]="event.mineentry__reglimit__c"></md-input>
+            <md-input name="remainingSeat" type="number" placeholder="Remaining Seats" (input)="eventFormErrorText = ''" [(ngModel)]="event.mineentry__remainingseats__c"></md-input>
+          </div>
+          <md-input name="description" maxLength="500" type="text" placeholder="Description" (input)="eventFormErrorText = ''" [(ngModel)]="event.mineentry__description__c"></md-input>
+          <md-radio-group [(value)]="event.mineentry__status__c" (change)="chooseEventStatus($event.value);">
+            <md-radio-button value="Open">Open</md-radio-button>
+            <md-radio-button value="Draft">Draft</md-radio-button>
+            <md-radio-button value="SoldOut">Sold Out</md-radio-button>
+            <md-radio-button value="Closed">Closed</md-radio-button>
+          </md-radio-group>
+        </form>
+      </md-card-content>
+      <md-card-content class="form-error-tips">
+        <p [style.visibility]="eventFormErrorText.length > 0 ?'visible':'hidden'">{{eventFormErrorText}}</p>
+      </md-card-content>
+      <md-card-actions align="end">
+        <button md-raised-button class="btn-cancel" (click)="editingEvent = false;">CANCEL</button>
+        <button md-raised-button color="accent" (click)="updateEvent();" type="submit">UPDATE</button>
+      </md-card-actions>
+    </md-card>
+  </div>
+  <div class="session-area">
+    <h3>Event Sessions<a (click)="showCreatingSession();" *ngIf="!creatingSession && isAdmin()">Create New</a></h3>
+    <md-card class="create-entity-card" *ngIf="creatingSession">
+      <md-card-title>Create new session</md-card-title>
+      <md-card-content>
+        <form>
+          <md-input name="title" maxLength="200" type="text" placeholder="Title" (input)="sessionFormErrorText = ''" [(ngModel)]="newSession.Title"></md-input>
+          <div class="clearfix cols-2">
+            <my-date-time-input [labelText]="startDTInfo.label" [selectedDate]="startDTInfo.date" [selectedHour]="startDTInfo.hour" [selectedMin]="startDTInfo.min" (dateTimeChanged)="sessionDateTimeChanged($event,'start');"></my-date-time-input>
+            <my-date-time-input [labelText]="endDTInfo.label" [selectedDate]="endDTInfo.date" [selectedHour]="endDTInfo.hour" [selectedMin]="endDTInfo.min" (dateTimeChanged)="sessionDateTimeChanged($event,'end');"></my-date-time-input>
+          </div>
+          <div class="clearfix cols-2">
+            <md-input name="regLimit" type="number" placeholder="Registration Limit" (input)="sessionFormErrorText = ''" [(ngModel)]="newSession.RegLimit"></md-input>
+            <md-input name="remainingSeat" type="number" placeholder="Remaining Seats" (input)="sessionFormErrorText = ''" [(ngModel)]="newSession.RemainingSeats"></md-input>
+          </div>
+          <md-radio-group [(value)]="newSession.Status" (change)="chooseSessionStatus($event.value);">
+            <md-radio-button value="Open">Open</md-radio-button>
+            <md-radio-button value="Draft">Draft</md-radio-button>
+            <md-radio-button value="SoldOut">Sold Out</md-radio-button>
+            <md-radio-button value="Closed">Closed</md-radio-button>
+          </md-radio-group>
+        </form>
+      </md-card-content>
+      <md-card-content class="form-error-tips">
+        <p [style.visibility]="sessionFormErrorText.length > 0 ?'visible':'hidden'">{{sessionFormErrorText}}</p>
+      </md-card-content>
+      <md-card-actions align="end">
+        <button md-raised-button class="btn-cancel" (click)="creatingSession = false;">CANCEL</button>
+        <button md-raised-button color="accent" (click)="createSession();" type="submit">CREATE</button>
+      </md-card-actions>
+    </md-card>
+    <p *ngIf="sessionList.length == 0 && !creatingSession" class="empty-tips">No session created</p>
+
+    <div class="card-container" *ngIf="sessionList.length > 0 && !creatingSession">
+      <md-card class="session-card entity-card" *ngFor="let session of sessionList">
+        <md-card-title>{{session.mineentry__title__c}}</md-card-title>
+        <md-card-content class="secondary">
+          <p>Status: <span class="status-{{session.mineentry__status__c}}">{{session.mineentry__status__c | statusLabel}}</span></p>
+          <p>Start: {{session.mineentry__start__c | sfDateFormat}}</p>
+          <p style="padding-left: 5px;">End: {{session.mineentry__end__c | sfDateFormat}}</p>
+          <p>Registration Limit: {{session.mineentry__reglimit__c}}</p>
+          <p>Remaining Seats: {{session.mineentry__remainingseats__c}}</p>
+        </md-card-content>
+        <md-card-actions align="end">
+          <a class="link-delete" *ngIf="isAdmin()" (click)="deleteSession(session.id);">Delete</a>
+        </md-card-actions>
+      </md-card>
+    </div>
+  </div>
+  <div class="attendee-area" *ngIf="isAdmin()">
+    <h3>Event Attendees<a (click)="showCreatingAttendee();" *ngIf="!creatingAttendee && isAdmin()" [ngClass]="{creating: creatingAttendee}">Create New</a></h3>
+
+    <md-card class="create-entity-card" *ngIf="creatingAttendee">
+      <md-card-title>Create new attendee</md-card-title>
+      <md-card-content>
+        <form [ngClass]="{creating: creatingAttendee,error:attendeeFormErrorText.length > 0}">
+          <div class="clearfix cols-2">
+            <md-input #firstName name="firstName" maxLength="50" type="text" placeholder="First Name" (input)="attendeeFormErrorText = ''" [(ngModel)]="newAttendee.FirstName"></md-input>
+            <md-input name="lastName" maxLength="50" type="text" placeholder="Last Name" [(ngModel)]="newAttendee.LastName"></md-input>
+          </div>
+          <div class="clearfix cols-2">
+            <md-input name="email" maxLength="50" type="email" placeholder="Email" (input)="attendeeFormErrorText = ''" [(ngModel)]="newAttendee.Email"></md-input>
+            <md-input name="phone" maxLength="50" type="tel" placeholder="Phone" (input)="attendeeFormErrorText = ''" [(ngModel)]="newAttendee.Phone"></md-input>
+          </div>
+          <md-input name="company" maxLength="200" type="text" placeholder="Company" [(ngModel)]="newAttendee.Company"></md-input>
+        </form>
+      </md-card-content>
+      <md-card-content class="form-error-tips">
+        <p [style.visibility]="attendeeFormErrorText.length > 0 ?'visible':'hidden'">{{attendeeFormErrorText}}</p>
+      </md-card-content>
+      <md-card-actions align="end">
+        <button md-raised-button class="btn-cancel" (click)="creatingAttendee = false;">CANCEL</button>
+        <button md-raised-button color="accent" (click)="createAttendee();" type="submit">CREATE</button>
+      </md-card-actions>
+    </md-card>
+    <p *ngIf="attendeeList.length == 0 && !creatingAttendee" class="empty-tips">No attendee created</p>
+
+    <div class="card-container" *ngIf="attendeeList.length > 0 && !creatingAttendee">
+      <md-card class="attendee-card entity-card" *ngFor="let att of attendeeList">
+        <md-card-title>{{att.mineentry__firstname__c}} {{att.mineentry__lastname__c}}</md-card-title>
+        <md-card-content class="secondary">
+          <p>Email: {{att.mineentry__email__c}} </p>
+          <p>Phone: {{att.mineentry__phone__c}}</p>
+          <p>Company: {{att.mineentry__company__c}}</p>
+          <p>Assigned Sessions: {{getAssignedNumber(att.id)}}</p>
+
+          <div class="assign-actions">
+            <a (click)="showReassignSessionArea(att.id);">Reassign Sessions</a>
+
+            <div class="assign-area" *ngIf="assigningSessionAdmin && assigningAttendeeId == att.id">
+              <ul class="list" *ngIf="openSessionList.length > 0">
+                <li *ngFor="let session of openSessionList">
+                  <md-checkbox [checked]="isAssigned(att.id,session.id)" (change)="checkSession(att.id,session.id,$event.checked)">{{session.mineentry__title__c}}</md-checkbox>
+                </li>
+              </ul>
+              <p *ngIf="openSessionList.length == 0" class="empty-tips">No any open session to be reassigned </p>
+
+              <div class="actions">
+                <button md-raised-button class="btn-cancel" (click)="assigningSessionAdmin = false;">Cancel</button>
+                <button md-raised-button color="accent" class="btn-assign" (click)="assignSession(att.id)" *ngIf="openSessionList.length > 0">Reassign</button>
+              </div>
+            </div>
+          </div>
+        </md-card-content>
+        <md-card-actions align="end">
+          <a class="link-delete" *ngIf="isAdmin()" (click)="deleteAttendee(att.id);">Delete</a>
+        </md-card-actions>
+      </md-card>
+    </div>
+  </div>
+  <div class="register-area" *ngIf="!isAdmin()">
+    <button md-raised-button color="accent" (click)="registeringEvent = true;" class="btn-register" *ngIf="allowRegistered() && !registeringEvent && !registeredSuccess && registeredSessions.length == 0">Register This Event</button>
+    <md-card class="create-entity-card" *ngIf="registeringEvent">
+      <md-card-title>Registering Event</md-card-title>
+      <p *ngIf="openSessionList.length == 0" class="empty-tips">No any open session you can register </p>
+      <md-card-content *ngIf="openSessionList.length > 0">
+        <h4>1. Select sessions which you want to register</h4>
+        <ul class="list clearfix" *ngIf="openSessionList.length > 0">
+          <li *ngFor="let session of openSessionList">
+            <md-checkbox [checked]="isSelected4Register(session.id)" (change)="checkRegisteredSession(session.id,$event.checked)">{{session.mineentry__title__c}}</md-checkbox>
+          </li>
+        </ul>
+        <h4>2. Enter your attendee information</h4>
+
+        <form>
+          <div class="clearfix cols-2">
+            <md-input name="firstName" maxLength="50" type="text" placeholder="First Name" (input)="registerErrorText = ''" [(ngModel)]="registerAttendee.FirstName"></md-input>
+            <md-input name="lastName" maxLength="50" type="text" placeholder="Last Name" [(ngModel)]="registerAttendee.LastName"></md-input>
+          </div>
+          <div class="clearfix cols-2">
+            <md-input name="email" maxLength="50" type="email" placeholder="Email" (input)="registerErrorText = ''" [(ngModel)]="registerAttendee.Email"></md-input>
+            <md-input name="phone" maxLength="50" type="tel" placeholder="Phone" (input)="registerErrorText = ''" [(ngModel)]="registerAttendee.Phone"></md-input>
+          </div>
+          <md-input name="company" maxLength="200" type="text" placeholder="Company" [(ngModel)]="registerAttendee.Company"></md-input>
+        </form>
+      </md-card-content>
+      <md-card-content class="form-error-tips">
+        <p [style.visibility]="registerErrorText.length > 0 ?'visible':'hidden'">{{registerErrorText}}</p>
+      </md-card-content>
+      <md-card-actions align="end">
+        <button md-raised-button class="btn-cancel" (click)="registeringEvent = false;">CANCEL</button>
+        <button md-raised-button color="accent" (click)="registerSessions();" type="submit" *ngIf="openSessionList.length > 0">REGISTER</button>
+      </md-card-actions>
+    </md-card>
+    <div class="registration-info" *ngIf="registeredSessions.length > 0">
+      <h3>Registration Information</h3>
+
+      <div class="detail">
+        <h4>You have registered following sessions:</h4>
+        <ul class="clearfix">
+          <li *ngFor="let reg of registeredSessions">
+            [ <label>{{getSessionTitle(reg.mineentry__sessionid__c)}}</label> ]
+          </li>
+        </ul>
+        <h4>Your registered attendee information:</h4>
+
+        <div class="rows">
+          <div>
+            <label class="name">{{registeredAttendee.mineentry__firstname__c}} {{registeredAttendee.mineentry__lastname__c}}</label>
+          </div>
+          <div>
+            <label>Email: </label><span>{{registeredAttendee.mineentry__email__c}}</span>
+          </div>
+          <div>
+            <label>Phone: </label><span>{{registeredAttendee.mineentry__phone__c}}</span>
+          </div>
+          <div>
+            <label>Company: </label><span>{{registeredAttendee.mineentry__company__c}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</md-content>

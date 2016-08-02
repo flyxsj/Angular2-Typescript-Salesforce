@@ -1,0 +1,36 @@
+<style>
+  .login-box {
+    max-width: 350px;
+    margin: 80px auto 0 auto;
+    text-align: center;
+  }
+
+  .login-box a {
+    text-decoration: none;
+    width: 100%;
+    padding: 20px 0;
+    letter-spacing: 1px;
+    background-color: #44c767;
+    -moz-border-radius: 28px;
+    -webkit-border-radius: 28px;
+    border-radius: 15px;
+    border: 1px solid #18ab29;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-size: 20px;
+    text-shadow: 0 1px 0 #2f6627;
+  }
+
+  .login-box .login-salesforce-user {
+    margin-bottom: 40px;
+  }
+</style>
+<div class="login-box">
+  <div>
+    <a href="/login?type=salesforceUser" class="login-salesforce-user">Login as a Salesforce user</a>
+  </div>
+  <div>
+    <a href="/login?type=user" class="login-user">Login as an user</a>
+  </div>
+</div>

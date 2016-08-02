@@ -1,0 +1,62 @@
+<md-content>
+  <div class="form" *ngIf="addingEvent">
+    <md-card class="create-event-card create-entity-card">
+      <md-card-title>Create your event</md-card-title>
+      <md-card-content>
+        <form (submit)="createEvent();">
+          <md-input name="title" maxLength="200" type="text" placeholder="Event Title" (input)="eventFormErrorText = ''" [(ngModel)]="event.title"></md-input>
+          <div class="clearfix cols-2">
+            <my-date-time-input [labelText]="startDTInfo.label" [selectedDate]="startDTInfo.date" [selectedHour]="startDTInfo.hour" [selectedMin]="startDTInfo.min" (dateTimeChanged)="dateTimeChanged($event,'start');"></my-date-time-input>
+            <my-date-time-input [labelText]="endDTInfo.label" [selectedDate]="endDTInfo.date" [selectedHour]="endDTInfo.hour" [selectedMin]="endDTInfo.min" (dateTimeChanged)="dateTimeChanged($event,'end');"></my-date-time-input>
+          </div>
+
+          <div class="clearfix cols-2">
+            <md-input name="regLimit" type="number" placeholder="Registration Limit" (input)="eventFormErrorText = ''" [(ngModel)]="event.limit"></md-input>
+            <md-input name="remainingSeat" type="number" placeholder="Remaining Seats" (input)="eventFormErrorText = ''" [(ngModel)]="event.seats"></md-input>
+          </div>
+          <md-input name="description" maxLength="500" type="text" placeholder="Description" (input)="eventFormErrorText = ''" [(ngModel)]="event.description"></md-input>
+          <!--<div>-->
+          <!--<textarea class="textarea-desc" name="description" placeholder="Description" (input)="eventFormErrorText = ''" [(ngModel)]="event.description"></textarea>-->
+          <!--</div>-->
+          <md-radio-group [(value)]="event.status" (change)="chooseStatus($event.value);">
+            <md-radio-button value="Open">Open</md-radio-button>
+            <md-radio-button value="Draft">Draft</md-radio-button>
+            <md-radio-button value="SoldOut">Sold Out</md-radio-button>
+            <md-radio-button value="Closed">Closed</md-radio-button>
+          </md-radio-group>
+        </form>
+      </md-card-content>
+      <md-card-content class="form-error-tips">
+        <p [style.visibility]="eventFormErrorText.length > 0 ?'visible':'hidden'">{{eventFormErrorText}}</p>
+      </md-card-content>
+      <md-card-actions align="end">
+        <button md-raised-button class="btn-cancel" (click)="addingEvent = false;">CANCEL</button>
+        <button md-raised-button color="accent" (click)="createEvent();" type="submit">CREATE</button>
+      </md-card-actions>
+    </md-card>
+  </div>
+  <div *ngIf="!addingEvent">
+    <h2>Event List</h2>
+
+    <div class="link-add-event" *ngIf="isAdmin()">
+      <a (click)="addingEvent = true;" class="link-add-event" style="">Add Event</a>
+    </div>
+    <div class="card-container" *ngIf="eventList.length > 0">
+      <md-card class="event-card" *ngFor="let event of eventList">
+        <md-card-title>{{event.mineentry__title__c}}</md-card-title>
+        <md-card-content class="secondary">
+          <p><label>Status: </label><span class="status-{{event.mineentry__status__c}}">{{event.mineentry__status__c | statusLabel}}</span></p>
+          <p><label>Start: </label>{{event.mineentry__start__c | sfDateFormat}}</p>
+          <p><label style="padding-left: 6px;">End: </label>{{event.mineentry__end__c | sfDateFormat}}</p>
+          <p><label>Registration Limit: </label>{{event.mineentry__reglimit__c}}</p>
+          <p><label>Remaining Seats: </label>{{event.mineentry__remainingseats__c}}</p>
+        </md-card-content>
+        <md-card-actions align="end">
+          <button md-button class="btn-delete" *ngIf="isAdmin()" (click)="deleteEvent(event.id)">Delete</button>
+          <button md-button color="primary" [routerLink]="['/detail', {id: event.id}]">View Detail</button>
+        </md-card-actions>
+      </md-card>
+    </div>
+    <p *ngIf="eventList.length == 0" class="empty-tips">No event created</p>
+  </div>
+</md-content>

@@ -1,0 +1,10 @@
+<header>
+  <!--<a [routerLink]="['/']">Event Home</a>-->
+  <span>
+    You logged in as <label *ngIf="!isAdmin()">user</label>
+    <label *ngIf="isAdmin()">Salesforce user</label>
+  </span> <a href="/logout">Log Out</a>
+</header>
+<main>
+  <router-outlet></router-outlet>
+</main>

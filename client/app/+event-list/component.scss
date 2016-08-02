@@ -1,0 +1,129 @@
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.secondary {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+p.empty-tips {
+  padding: 50px;
+  color: #666;
+  font-size: 24px;
+  opacity: 0;
+  animation: showing 1.0s forwards;
+  animation-iteration-count: 1;
+  animation-delay: 1s;
+}
+
+@keyframes showing {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+md-input {
+  margin: 8px 0;
+  width: 100%;
+}
+
+md-radio-button, md-checkbox {
+  margin: 16px 8px;
+}
+
+.form {
+  display: flex;
+}
+
+.form md-card {
+  flex-grow: 1;
+}
+
+md-card {
+  width: 400px;
+  box-sizing: border-box;
+  margin: 16px;
+}
+
+.card-container {
+  display: flex;
+  flex-flow: row wrap;
+  margin: 0 auto;
+  max-width: 870px;
+}
+
+.md-accent[md-raised-button], .md-accent[md-fab], .md-accent[md-mini-fab] {
+  background: green;
+}
+
+.btn-cancel {
+  background: #eee;
+}
+
+md-radio-group {
+  margin-left: -8px;
+}
+
+md-card, md-card:hover {
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px -1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.7);
+}
+
+md-card.event-card {
+  padding: 14px;
+  padding-bottom: 0;
+  md-card-title, md-card-content {
+    text-align: left;
+  }
+  md-card-title {
+    font-size: 18px;
+  }
+  md-card-title, md-card-subtitle, md-card-content, md-card-actions {
+    margin-bottom: 10px;
+  }
+  md-card-content {
+    p {
+      margin: 7px 0;
+    }
+  }
+  md-card-actions {
+    padding-right: 20px;
+  }
+}
+
+md-card.create-event-card {
+  md-card-actions {
+    margin-bottom: -5px;
+    padding-right: 10px;
+  }
+  form {
+    text-align: left;
+  }
+}
+
+.btn-delete {
+  color: #b70404;
+}
+
+.link-add-event {
+  text-align: left;
+  a {
+    margin-left: 30px;
+    text-decoration: underline;
+    color: green;
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 767px) {
+  .link-add-event {
+    text-align: left;
+    a {
+      margin-left: 0;
+    }
+  }
+}

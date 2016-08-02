@@ -1,0 +1,260 @@
+body {
+  background: #fff;
+  margin: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+.status-Open {
+  color: green;
+  font-weight: bold;
+}
+
+.status-Closed, .status-SoldOut {
+  text-decoration: line-through;
+  font-weight: bold;
+}
+
+.status-Draft {
+  color: #f96d6d;
+  font-weight: bold;
+}
+
+//.textarea-desc {
+//  resize: none;
+//  width: 98.5%;
+//  height: 100px;
+//  outline: none;
+//  padding: 5px;
+//  font-size: 14px;
+//  border: 1px solid #aaa;
+//}
+
+.col-sm-6 {
+  position: relative;
+  min-height: 1px;
+}
+
+.md-ink-ripple {
+  background-color: #fff !important;
+}
+
+.md-radio-checked .md-radio-inner-circle {
+  background-color: green !important;
+}
+
+.md-radio-checked .md-radio-outer-circle {
+  border-color: green !important;
+}
+
+.md-checkbox-checked .md-checkbox-background {
+  background-color: green !important;
+}
+
+.md-checkbox-layout {
+  display: inline-block !important;
+  .md-ink-ripple {
+    display: none !important;
+  }
+  .md-checkbox-inner-container {
+    margin-right: 3px !important;
+  }
+  .md-checkbox-label {
+    color: #333;
+  }
+}
+
+.secondary {
+  color: rgba(0, 0, 0, 0.54);
+}
+
+md-input {
+  margin: 8px 0;
+  width: 100%;
+}
+
+.form {
+  display: flex;
+}
+
+.form md-card {
+  flex-grow: 1;
+}
+
+md-card {
+  width: 400px;
+  box-sizing: border-box;
+  margin: 16px;
+}
+
+.card-container {
+  display: flex;
+  flex-flow: row wrap;
+  margin: 0 auto;
+}
+
+.md-accent[md-raised-button], .md-accent[md-fab], .md-accent[md-mini-fab] {
+  background: green;
+}
+
+.btn-cancel {
+  background: #eee;
+}
+
+md-radio-group {
+  margin-left: -8px;
+}
+
+md-card, md-card:hover {
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px -1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.7);
+}
+
+md-card.event-card, md-card.entity-card {
+  padding: 14px;
+  md-card-title, md-card-content {
+    text-align: left;
+  }
+  md-card-title {
+    font-size: 18px;
+  }
+  md-card-title, md-card-subtitle, md-card-content, md-card-actions {
+    margin-bottom: 10px;
+  }
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: " ";
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+.create-entity-card {
+  width: auto;
+  .cols-2 {
+    md-input, my-date-time-input .select-date-time {
+      width: 49%;
+      float: left;
+    }
+    md-input:first-child, my-date-time-input:first-child .select-date-time {
+      margin-right: 2%;
+    }
+  }
+  md-card-content {
+    margin-bottom: 0;
+  }
+  .btn-cancel {
+    background: #eee;
+    color: #555;
+  }
+  button[type=submit] {
+    background: green;
+  }
+  md-card-actions {
+    margin-bottom: -5px !important;
+    padding-right: 10px !important;
+  }
+}
+
+.form-error-tips {
+  margin-bottom: 0;
+  p {
+    height: 20px;
+    line-height: 20px;
+    text-align: right;
+    color: rgb(210, 4, 4);
+  }
+}
+
+.common-select {
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ccc;
+  height: 30px;
+  line-height: 30px;
+  border-radius: 3px;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.common-select select {
+  font-size: 0.9em;
+  padding: 5px 8px;
+  border: none;
+  box-shadow: none;
+  background-color: transparent;
+  background-image: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.common-select select:focus {
+  outline: none;
+}
+
+.select-date-time {
+  display: inline-block;
+  margin: 15px 0;
+  * {
+    vertical-align: middle;
+  }
+  .label {
+    display: inline-block;
+    width: 38px;
+    text-align: left;
+    color: #444;
+  }
+  .time-area {
+    margin-top: 1px;
+    display: inline-block;
+    span {
+      font-weight: bold;
+    }
+    .common-select:first-child {
+      margin-left: 8px;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .col-sm-6 {
+    float: left;
+  }
+  .col-sm-6 {
+    width: 50%;
+  }
+}
+
+@media (max-width: 767px) {
+  .create-entity-card {
+    .cols-2 {
+      my-date-time-input .select-date-time {
+        width: 100%;
+        float: none;
+      }
+      my-date-time-input:first-child .select-date-time {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+@media (max-width: 550px) {
+  md-card {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+  md-card.event-card {
+    width: 100% !important;
+  }
+  md-card.session-card, md-card.attendee-card {
+    max-width: 100% !important;
+  }
+}

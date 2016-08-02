@@ -1,0 +1,18 @@
+<div class="select-date-time">
+  <label class="label">{{labelText}}</label>
+  <my-date-picker [options]="myDatePickerOptions" (dateChanged)="onDateChanged($event)" [selDate]="dateTime.date"></my-date-picker>
+  <div class="time-area">
+    <div class="common-select">
+      <select (change)="onTimeChanged($event.target.value,'hour');">
+        <option *ngFor="let val of hourRanges;" value="{{val > 9 ? val : '0' + val}}" [selected]="val == dateTime.hour">{{val > 9 ? val : '0' + val}}</option>
+      </select>
+    </div>
+    <span>:</span>
+
+    <div class="common-select">
+      <select (change)="onTimeChanged($event.target.value,'min');">
+        <option *ngFor="let val of minRanges;" value="{{val > 9 ? val : '0' + val}}" [selected]="val == dateTime.min">{{val > 9 ? val : '0' + val}}</option>
+      </select>
+    </div>
+  </div>
+</div>
