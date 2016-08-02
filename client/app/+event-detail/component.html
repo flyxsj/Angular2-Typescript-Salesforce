@@ -27,7 +27,7 @@
               <label>Remaining Seats: </label>{{storedEvent.mineentry__remainingseats__c}}
             </div>
           </div>
-          <p><label>Description: </label>{{storedEvent.mineentry__description__c}}</p>
+          <p><label>Description: </label><span [innerHTML]="storedEvent.mineentry__description__c" #description></span></p>
         </md-card-content>
       </md-card>
     </div>

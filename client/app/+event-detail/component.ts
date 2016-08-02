@@ -40,6 +40,7 @@ import {MyDateTimeInputComponent} from '../date-time-input/index';
 })
 export class EventDetailComponent implements OnInit,AfterViewInit {
     //@ViewChild('eventTitle') eventTitle:ElementRef;
+    @ViewChild('description') $eventDesc;
     service:EventService;
     userInfo:{
         userType:string
@@ -163,6 +164,8 @@ export class EventDetailComponent implements OnInit,AfterViewInit {
     showEditingEvent():void {
         this.editingEvent = true;
         this.event = JSON.parse(JSON.stringify(this.storedEvent));
+        let ele = this.$eventDesc.nativeElement;
+        this.event['mineentry__description__c'] = ele.innerText || ele.textContent;
     }
 
     chooseEventStatus(val:string):void {
@@ -218,7 +221,9 @@ export class EventDetailComponent implements OnInit,AfterViewInit {
             + startDT.hour + ':' + startDT.min + ':00.000';
         event['mineentry__end__c'] = moment(endDT.date, 'MM/DD/YYYY').format('YYYY-MM-DD') + 'T'
             + endDT.hour + ':' + endDT.min + ':00.000';
-        var data = JSON.stringify(event);
+        var clonedEvent = JSON.parse(JSON.stringify(event));
+        clonedEvent['mineentry__description__c'] = utils.escapeHtml(clonedEvent['mineentry__description__c']);
+        var data = JSON.stringify(clonedEvent);
         this.service.updateEvent(data).then(
             res=> {
                 this.editingEvent = false;
