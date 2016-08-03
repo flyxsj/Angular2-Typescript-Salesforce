@@ -39,7 +39,7 @@
     <h2>Event List</h2>
 
     <div class="link-add-event" *ngIf="isAdmin()">
-      <a (click)="addingEvent = true;" class="link-add-event" style="">Add Event</a>
+      <a (click)="showAddingEvent()" class="link-add-event" style="">Add Event</a>
     </div>
     <div class="card-container" *ngIf="eventList.length > 0">
       <md-card class="event-card" *ngFor="let event of eventList">

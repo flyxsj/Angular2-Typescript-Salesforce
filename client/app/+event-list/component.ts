@@ -92,7 +92,13 @@ export class EventListComponent implements OnInit {
     constructor(httpClient:HttpClient, service:EventService, private _router:Router) {
         this.httpClient = httpClient;
         this.service = service;
+        this.initDateTimeInfo();
+    }
+
+    initDateTimeInfo():void {
         this.startDTInfo.date = this.endDTInfo.date = moment().format('MM/DD/YYYY');
+        this.startDTInfo.hour = '00';
+        this.startDTInfo.min = '00';
         this.startDateTime.date = this.startDTInfo.date;
         this.startDateTime.hour = this.startDTInfo.hour;
         this.startDateTime.min = this.startDTInfo.min;
@@ -119,6 +125,11 @@ export class EventListComponent implements OnInit {
                 this.getEventList();
             }
         );
+    }
+
+    showAddingEvent():void {
+        this.initDateTimeInfo();
+        this.addingEvent = true;
     }
 
     getEventList():void {

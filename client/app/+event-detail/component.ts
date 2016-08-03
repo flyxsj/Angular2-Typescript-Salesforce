@@ -18,7 +18,7 @@ import {EventService,utils,SFDateFormatPipe,StatusLabelPipe,HttpClient} from '..
 import {MyDateTimeInputComponent} from '../date-time-input/index';
 
 @Component({
-    selector: 'my-event-list',
+    selector: 'my-event-detail',
     templateUrl: './component.html',
     providers: [MdRadioDispatcher, MdIconRegistry, EventService, HttpClient],
     directives: [
@@ -137,6 +137,10 @@ export class EventDetailComponent implements OnInit,AfterViewInit {
 
     constructor(service:EventService) {
         this.service = service;
+        this.initSessionDateTimeInfo();
+    }
+
+    initSessionDateTimeInfo():void {
         this.startDTInfo.date = this.endDTInfo.date = moment().format('MM/DD/YYYY');
         this.startDateTime.date = this.startDTInfo.date;
         this.startDateTime.hour = this.startDTInfo.hour;
@@ -282,6 +286,7 @@ export class EventDetailComponent implements OnInit,AfterViewInit {
 
     showCreatingSession():void {
         this.creatingSession = true;
+        this.initSessionDateTimeInfo();
     }
 
     sessionDateTimeChanged(event:any, type) {
