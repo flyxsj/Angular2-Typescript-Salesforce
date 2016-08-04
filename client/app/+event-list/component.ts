@@ -49,47 +49,10 @@ export class EventListComponent implements OnInit {
     addingEvent:boolean = false;
     eventFormErrorText:string = '';
     event:EventEntity = new EventEntity();
-    //initEvent = JSON.parse(JSON.stringify(this.event));
-
-    startDTInfo = {
-        label: 'Start: ',
-        date: '',
-        hour: '00',
-        min: '00'
-    };
-    endDTInfo = {
-        label: 'End: ',
-        date: '',
-        hour: '00',
-        min: '00'
-    };
-    startDateTime:{
-        date:string,
-        hour:string,
-        min:string
-    } = {date: '', hour: '', min: ''};
-    endDateTime:{
-        date:string,
-        hour:string,
-        min:string
-    } = {date: '', hour: '', min: ''};
 
     constructor(httpClient:HttpClient, service:EventService, private _router:Router) {
         this.httpClient = httpClient;
         this.service = service;
-        this.initDateTimeInfo();
-    }
-
-    initDateTimeInfo():void {
-        this.startDTInfo.date = this.endDTInfo.date = moment().format('MM/DD/YYYY');
-        this.startDTInfo.hour = '00';
-        this.startDTInfo.min = '00';
-        this.startDateTime.date = this.startDTInfo.date;
-        this.startDateTime.hour = this.startDTInfo.hour;
-        this.startDateTime.min = this.startDTInfo.min;
-        this.endDateTime.date = this.endDTInfo.date;
-        this.endDateTime.hour = this.endDTInfo.hour;
-        this.endDateTime.min = this.endDTInfo.min;
     }
 
     dateTimeChanged(event:any, type) {
@@ -97,10 +60,8 @@ export class EventListComponent implements OnInit {
         let date:Date;
         if (type == 'start') {
             date = this.event.start;
-            //this.startDateTime = event.dateTime;
         } else {
             date = this.event.end;
-            //this.endDateTime = event.dateTime;
         }
         date.setFullYear(m.year());
         date.setMonth(m.month());
@@ -124,7 +85,6 @@ export class EventListComponent implements OnInit {
     showAddingEvent():void {
         this.eventFormErrorText = '';
         this.addingEvent = true;
-        this.initDateTimeInfo();
     }
 
     cancelAddingEvent():void {

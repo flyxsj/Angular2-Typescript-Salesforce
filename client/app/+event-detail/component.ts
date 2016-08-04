@@ -42,7 +42,6 @@ var moment = require('moment');
     styleUrls: ['./component.scss']
 })
 export class EventDetailComponent implements OnInit,AfterViewInit {
-    //@ViewChild('eventTitle') eventTitle:ElementRef;
     @ViewChild('description') $eventDesc;
     service:EventService;
     userInfo:{
