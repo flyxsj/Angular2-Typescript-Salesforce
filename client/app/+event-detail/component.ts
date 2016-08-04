@@ -12,11 +12,14 @@ import {MdInput} from '@angular2-material/input';
 import {MdCheckbox} from '@angular2-material/checkbox';
 import {MdRadioButton, MdRadioGroup,MdRadioDispatcher} from '@angular2-material/radio';
 import {MdIcon, MdIconRegistry} from '@angular2-material/icon';
-var moment = require('moment');
 
 import {EventService,utils,SFDateFormatPipe,StatusLabelPipe,HttpClient} from '../shared/index';
 import {MyDateTimeInputComponent} from '../date-time-input/index';
 
+import {SessionEntity,AttendeeEntity} from "../shared/model/index";
+import IBaseInfo from "../shared/model/BaseInfo.interface";
+
+var moment = require('moment');
 @Component({
     selector: 'my-event-detail',
     templateUrl: './component.html',
@@ -70,51 +73,12 @@ export class EventDetailComponent implements OnInit,AfterViewInit {
     };
 
     creatingAttendee:boolean = false;
-    newAttendee:{
-        FirstName:string,
-        LastName:string,
-        Phone:string,
-        Email:string,
-        Company:string,
-        EventId:string
-    } = {FirstName: '', LastName: '', Phone: '', Email: '', Company: '', EventId: ''};
+    newAttendee:AttendeeEntity = new AttendeeEntity();
     attendeeFormErrorText:string = '';
 
     creatingSession:boolean = false;
-    newSession:{
-        Title:string,
-        Start:string,
-        End:string,
-        Status:string,
-        RegLimit:number,
-        RemainingSeats:number,
-        EventId:string
-    } = {Title: '', Start: '', End: '', Status: 'Open', RegLimit: 5, RemainingSeats: 5, EventId: ''};
-    defaultSession = {Title: '', Start: '', End: '', Status: 'Open', RegLimit: 5, RemainingSeats: 5, EventId: ''};
+    newSession:SessionEntity = new SessionEntity();
     sessionFormErrorText:string = '';
-    startDTInfo = {
-        label: 'Start: ',
-        date: '',
-        hour: '00',
-        min: '00'
-    };
-    endDTInfo = {
-        label: 'End: ',
-        date: '',
-        hour: '00',
-        min: '00'
-    };
-    startDateTime:{
-        date:string,
-        hour:string,
-        min:string
-    } = {date: '', hour: '', min: ''};
-    endDateTime:{
-        date:string,
-        hour:string,
-        min:string
-    } = {date: '', hour: '', min: ''};
-
 
     assigningSessionAdmin = false;
     assigningAttendeeId:string = '';
@@ -137,21 +101,9 @@ export class EventDetailComponent implements OnInit,AfterViewInit {
 
     constructor(service:EventService) {
         this.service = service;
-        this.initSessionDateTimeInfo();
-    }
-
-    initSessionDateTimeInfo():void {
-        this.startDTInfo.date = this.endDTInfo.date = moment().format('MM/DD/YYYY');
-        this.startDateTime.date = this.startDTInfo.date;
-        this.startDateTime.hour = this.startDTInfo.hour;
-        this.startDateTime.min = this.startDTInfo.min;
-        this.endDateTime.date = this.endDTInfo.date;
-        this.endDateTime.hour = this.endDTInfo.hour;
-        this.endDateTime.min = this.endDTInfo.min;
     }
 
     ngOnInit() {
-        //TODO need a better internal way to get parameter.But did not find.
         var url = window.location.href;
         this.eventId = url.split('id=')[1];
         this.service.getUserType().then(
@@ -249,35 +201,16 @@ export class EventDetailComponent implements OnInit,AfterViewInit {
     }
 
     createAttendee():void {
-        this.newAttendee.EventId = this.eventId;
-        if (this.newAttendee.FirstName.trim().length == 0) {
-            this.attendeeFormErrorText = 'Please enter First Name';
+        this.attendeeFormErrorText = this.newAttendee.verify();
+        if (this.attendeeFormErrorText.length > 0) {
             return;
         }
-        if (this.newAttendee.LastName.trim().length == 0) {
-            this.attendeeFormErrorText = 'Please enter Last Name';
-            return;
-        }
-        if (this.newAttendee.Email.trim().length == 0) {
-            this.attendeeFormErrorText = 'Please enter Email';
-            return;
-        }
-        if (this.newAttendee.Phone.trim().length == 0) {
-            this.attendeeFormErrorText = 'Please enter Phone';
-            return;
-        }
-        if (!utils.isValidEmail(this.newAttendee.Email)) {
-            this.attendeeFormErrorText = 'Please enter valid Email';
-            return;
-        }
-        var data = JSON.stringify(this.newAttendee);
+        var entity = JSON.parse(JSON.stringify(this.newAttendee));
+        entity.eventId = this.eventId;
+        var data = JSON.stringify(entity);
         this.service.createAttendee(data).then(
             res=> {
-                for (var key in this.newAttendee) {
-                    if (key != 'EventId') {
-                        this.newAttendee[key] = '';
-                    }
-                }
+                this.newAttendee.init();
                 this.creatingAttendee = false;
                 this.getAttendeeList();
             }
@@ -286,18 +219,45 @@ export class EventDetailComponent implements OnInit,AfterViewInit {
 
     showCreatingSession():void {
         this.creatingSession = true;
-        this.initSessionDateTimeInfo();
+    }
+
+    cancelCreatingSession():void {
+        this.creatingSession = false;
+        this.sessionFormErrorText = '';
+        this.newSession.init();
     }
 
     sessionDateTimeChanged(event:any, type) {
+        let m = moment(event.dateTime.date + ' ' + event.dateTime.hour + ':' + event.dateTime.min, 'MM/DD/YYYY HH:mm');
+        let date:Date;
         if (type == 'start') {
-            this.startDateTime = event.dateTime;
+            date = this.newSession.start;
         } else {
-            this.endDateTime = event.dateTime;
+            date = this.newSession.end;
         }
+        date.setFullYear(m.year());
+        date.setMonth(m.month());
+        date.setDate(m.date());
+        date.setHours(m.hour());
+        date.setMinutes(m.minute());
         if (event.dateTime.date.length > 0) {
             this.sessionFormErrorText = '';
         }
+    }
+
+    getDateTimePartText(date:Date, type:string):string {
+        if (date) {
+            if (type == 'date') {
+                return moment(date).format('MM/DD/YYYY');
+            }
+            if (type == 'hour') {
+                return moment(date).format('HH');
+            }
+            if (type == 'min') {
+                return moment(date).format('mm');
+            }
+        }
+        return '';
     }
 
     deleteSession(id):void {
@@ -310,41 +270,21 @@ export class EventDetailComponent implements OnInit,AfterViewInit {
     }
 
     createSession():void {
-        this.newSession.EventId = this.eventId;
-        if (this.newSession.Title.trim().length == 0) {
-            this.sessionFormErrorText = 'Please enter Title';
+        let session = this.newSession;
+        this.sessionFormErrorText = session.verify();
+        if (this.sessionFormErrorText.length > 0) {
             return;
         }
-        if (this.startDateTime.date.length == 0) {
-            this.sessionFormErrorText = 'Please enter Start Date';
-            return;
-        }
-        if (this.endDateTime.date.length == 0) {
-            this.sessionFormErrorText = 'Please enter End Date';
-            return;
-        }
-        let startTimestamp = moment(this.startDateTime.date + ' ' + this.startDateTime.hour + this.startDateTime.min, 'MM/DD/YYYY HHmm').unix();
-        let endTimestamp = moment(this.endDateTime.date + ' ' + this.endDateTime.hour + this.endDateTime.min, 'MM/DD/YYYY HHmm').unix();
-        if (endTimestamp <= startTimestamp) {
-            this.sessionFormErrorText = 'The End Date should be after the Start Date';
-            return;
-        }
-        if (!(/^[0-9]+$/.test(this.newSession.RegLimit + '') && this.newSession.RegLimit > 0)) {
-            this.sessionFormErrorText = 'Please enter valid Registration Limit';
-            return;
-        }
-        if (!(/^[0-9]+$/.test(this.newSession.RemainingSeats + '') && this.newSession.RemainingSeats > 0)) {
-            this.sessionFormErrorText = 'Please enter valid Remaining Seats';
-            return;
-        }
-        this.newSession.Start = moment(this.startDateTime.date, 'MM/DD/YYYY').format('YYYY-MM-DD') + 'T'
-            + this.startDateTime.hour + ':' + this.startDateTime.min + ':00.000';
-        this.newSession.End = moment(this.endDateTime.date, 'MM/DD/YYYY').format('YYYY-MM-DD') + 'T'
-            + this.endDateTime.hour + ':' + this.endDateTime.min + ':00.000';
-        var data = JSON.stringify(this.newSession);
+        var entity = JSON.parse(JSON.stringify(session));
+        delete entity.start;
+        entity.start = moment(session.start).format('YYYY-MM-DDTHH:mm:00.000');
+        delete entity.end;
+        entity.end = moment(session.end).format('YYYY-MM-DDTHH:mm:00.000');
+        entity.eventId = this.eventId;
+        var data = JSON.stringify(entity);
         this.service.createSession(data).then(
             res=> {
-                this.newSession = JSON.parse(JSON.stringify(this.defaultSession));
+                this.newSession.init();
                 this.creatingSession = false;
                 this.getSessionList();
             }
@@ -352,7 +292,7 @@ export class EventDetailComponent implements OnInit,AfterViewInit {
     }
 
     chooseSessionStatus(val):void {
-        this.newSession.Status = val;
+        this.newSession.status = val;
     }
 
     showReassignSessionArea(attendeeId):void {

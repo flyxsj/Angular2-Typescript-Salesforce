@@ -25,6 +25,17 @@ app.use(session({
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/rest/*', function (req, res, next) {
+    var ses = req.session;
+    var userType = ses.loginUserType;
+    if (!userType) {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({code: 'timeout', message: '', data: {}}));
+    } else {
+        next();
+    }
+});
+
 app.use('/', routes);
 
 // catch 404 and forward to error handler

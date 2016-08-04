@@ -67,16 +67,16 @@
       <md-card-title>Create new session</md-card-title>
       <md-card-content>
         <form>
-          <md-input name="title" maxLength="200" type="text" placeholder="Title" (input)="sessionFormErrorText = ''" [(ngModel)]="newSession.Title"></md-input>
+          <md-input name="title" maxLength="200" type="text" placeholder="Title" (input)="sessionFormErrorText = ''" [(ngModel)]="newSession.title"></md-input>
           <div class="clearfix cols-2">
-            <my-date-time-input [labelText]="startDTInfo.label" [selectedDate]="startDTInfo.date" [selectedHour]="startDTInfo.hour" [selectedMin]="startDTInfo.min" (dateTimeChanged)="sessionDateTimeChanged($event,'start');"></my-date-time-input>
-            <my-date-time-input [labelText]="endDTInfo.label" [selectedDate]="endDTInfo.date" [selectedHour]="endDTInfo.hour" [selectedMin]="endDTInfo.min" (dateTimeChanged)="sessionDateTimeChanged($event,'end');"></my-date-time-input>
+            <my-date-time-input [labelText]="'Start: '" [selectedDate]="getDateTimePartText(newSession.start,'date')" [selectedHour]="getDateTimePartText(newSession.start,'hour')" [selectedMin]="getDateTimePartText(newSession.start,'min')" (dateTimeChanged)="sessionDateTimeChanged($event,'start');"></my-date-time-input>
+            <my-date-time-input [labelText]="'End: '" [selectedDate]="getDateTimePartText(newSession.end,'date')" [selectedHour]="getDateTimePartText(newSession.end,'hour')" [selectedMin]="getDateTimePartText(newSession.end,'min')" (dateTimeChanged)="sessionDateTimeChanged($event,'end');"></my-date-time-input>
           </div>
           <div class="clearfix cols-2">
-            <md-input name="regLimit" type="number" placeholder="Registration Limit" (input)="sessionFormErrorText = ''" [(ngModel)]="newSession.RegLimit"></md-input>
-            <md-input name="remainingSeat" type="number" placeholder="Remaining Seats" (input)="sessionFormErrorText = ''" [(ngModel)]="newSession.RemainingSeats"></md-input>
+            <md-input name="regLimit" type="number" placeholder="Registration Limit" (input)="sessionFormErrorText = ''" [(ngModel)]="newSession.limit"></md-input>
+            <md-input name="remainingSeat" type="number" placeholder="Remaining Seats" (input)="sessionFormErrorText = ''" [(ngModel)]="newSession.seats"></md-input>
           </div>
-          <md-radio-group [(value)]="newSession.Status" (change)="chooseSessionStatus($event.value);">
+          <md-radio-group [(value)]="newSession.status" (change)="chooseSessionStatus($event.value);">
             <md-radio-button value="Open">Open</md-radio-button>
             <md-radio-button value="Draft">Draft</md-radio-button>
             <md-radio-button value="SoldOut">Sold Out</md-radio-button>
@@ -88,7 +88,7 @@
         <p [style.visibility]="sessionFormErrorText.length > 0 ?'visible':'hidden'">{{sessionFormErrorText}}</p>
       </md-card-content>
       <md-card-actions align="end">
-        <button md-raised-button class="btn-cancel" (click)="creatingSession = false;">CANCEL</button>
+        <button md-raised-button class="btn-cancel" (click)="cancelCreatingSession();">CANCEL</button>
         <button md-raised-button color="accent" (click)="createSession();" type="submit">CREATE</button>
       </md-card-actions>
     </md-card>
@@ -118,14 +118,14 @@
       <md-card-content>
         <form [ngClass]="{creating: creatingAttendee,error:attendeeFormErrorText.length > 0}">
           <div class="clearfix cols-2">
-            <md-input #firstName name="firstName" maxLength="50" type="text" placeholder="First Name" (input)="attendeeFormErrorText = ''" [(ngModel)]="newAttendee.FirstName"></md-input>
-            <md-input name="lastName" maxLength="50" type="text" placeholder="Last Name" [(ngModel)]="newAttendee.LastName"></md-input>
+            <md-input #firstName name="firstName" maxLength="50" type="text" placeholder="First Name" (input)="attendeeFormErrorText = ''" [(ngModel)]="newAttendee.firstName"></md-input>
+            <md-input name="lastName" maxLength="50" type="text" placeholder="Last Name" [(ngModel)]="newAttendee.lastName"></md-input>
           </div>
           <div class="clearfix cols-2">
-            <md-input name="email" maxLength="50" type="email" placeholder="Email" (input)="attendeeFormErrorText = ''" [(ngModel)]="newAttendee.Email"></md-input>
-            <md-input name="phone" maxLength="50" type="tel" placeholder="Phone" (input)="attendeeFormErrorText = ''" [(ngModel)]="newAttendee.Phone"></md-input>
+            <md-input name="email" maxLength="50" type="email" placeholder="Email" (input)="attendeeFormErrorText = ''" [(ngModel)]="newAttendee.email"></md-input>
+            <md-input name="phone" maxLength="50" type="tel" placeholder="Phone" (input)="attendeeFormErrorText = ''" [(ngModel)]="newAttendee.phone"></md-input>
           </div>
-          <md-input name="company" maxLength="200" type="text" placeholder="Company" [(ngModel)]="newAttendee.Company"></md-input>
+          <md-input name="company" maxLength="200" type="text" placeholder="Company" [(ngModel)]="newAttendee.company"></md-input>
         </form>
       </md-card-content>
       <md-card-content class="form-error-tips">

@@ -11,11 +11,12 @@ import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 import {MdInput} from '@angular2-material/input';
 import {MdCheckbox} from '@angular2-material/checkbox';
 import {MdRadioButton, MdRadioGroup,MdRadioDispatcher} from '@angular2-material/radio';
-var moment = require('moment');
+import {EventEntity} from "../shared/model/index";
 
 import {EventService,HttpClient,SFDateFormatPipe,StatusLabelPipe} from '../shared/index';
 import {MyDateTimeInputComponent} from '../date-time-input/index';
 
+var moment = require('moment');
 @Component({
     selector: 'my-event-list',
     templateUrl: './component.html',
@@ -47,24 +48,8 @@ export class EventListComponent implements OnInit {
     eventList = [];
     addingEvent:boolean = false;
     eventFormErrorText:string = '';
-    event:{
-        title: string,
-        status:string,
-        start:string,
-        end:string,
-        limit:number,
-        seats:number,
-        description:string
-    } = {
-        title: '',
-        status: 'Open',
-        start: '',
-        end: '',
-        limit: 5,
-        seats: 5,
-        description: ''
-    };
-    initEvent = JSON.parse(JSON.stringify(this.event));
+    event:EventEntity = new EventEntity();
+    //initEvent = JSON.parse(JSON.stringify(this.event));
 
     startDTInfo = {
         label: 'Start: ',
@@ -108,11 +93,20 @@ export class EventListComponent implements OnInit {
     }
 
     dateTimeChanged(event:any, type) {
+        let m = moment(event.dateTime.date + ' ' + event.dateTime.hour + ':' + event.dateTime.min, 'MM/DD/YYYY HH:mm');
+        let date:Date;
         if (type == 'start') {
-            this.startDateTime = event.dateTime;
+            date = this.event.start;
+            //this.startDateTime = event.dateTime;
         } else {
-            this.endDateTime = event.dateTime;
+            date = this.event.end;
+            //this.endDateTime = event.dateTime;
         }
+        date.setFullYear(m.year());
+        date.setMonth(m.month());
+        date.setDate(m.date());
+        date.setHours(m.hour());
+        date.setMinutes(m.minute());
         if (event.dateTime.date.length > 0) {
             this.eventFormErrorText = '';
         }
@@ -128,8 +122,14 @@ export class EventListComponent implements OnInit {
     }
 
     showAddingEvent():void {
-        this.initDateTimeInfo();
+        this.eventFormErrorText = '';
         this.addingEvent = true;
+        this.initDateTimeInfo();
+    }
+
+    cancelAddingEvent():void {
+        this.addingEvent = false;
+        this.event.init();
     }
 
     getEventList():void {
@@ -154,44 +154,38 @@ export class EventListComponent implements OnInit {
         return (this.userInfo && this.userInfo.userType == 'salesforceUser');
     }
 
+    getDateTimePartText(date:Date, type:string):string {
+        if (date) {
+            if (type == 'date') {
+                return moment(date).format('MM/DD/YYYY');
+            }
+            if (type == 'hour') {
+                return moment(date).format('HH');
+            }
+            if (type == 'min') {
+                return moment(date).format('mm');
+            }
+        }
+        return '';
+    }
+
     createEvent():void {
-        var event = this.event;
-        if (event.title.trim().length == 0) {
-            this.eventFormErrorText = 'Please enter Title';
+        let event = this.event;
+        this.eventFormErrorText = event.verify();
+        if (this.eventFormErrorText.length > 0) {
             return;
         }
-        if (this.startDateTime.date.length == 0) {
-            this.eventFormErrorText = 'Please enter Start Date';
-            return;
-        }
-        if (this.endDateTime.date.length == 0) {
-            this.eventFormErrorText = 'Please enter End Date';
-            return;
-        }
-        let startTimestamp = moment(this.startDateTime.date + ' ' + this.startDateTime.hour + this.startDateTime.min, 'MM/DD/YYYY HHmm').unix();
-        let endTimestamp = moment(this.endDateTime.date + ' ' + this.endDateTime.hour + this.endDateTime.min, 'MM/DD/YYYY HHmm').unix();
-        if (endTimestamp <= startTimestamp) {
-            this.eventFormErrorText = 'The End Date should be after the Start Date';
-            return;
-        }
-        if (!(/^[0-9]+$/.test(event.limit + '') && +event.limit > 0)) {
-            this.eventFormErrorText = 'Please enter valid Registration Limit';
-            return;
-        }
-        if (!(/^[0-9]+$/.test(event.seats + '') && +event.seats > 0)) {
-            this.eventFormErrorText = 'Please enter valid Remaining Seats';
-            return;
-        }
-        event.start = moment(this.startDateTime.date, 'MM/DD/YYYY').format('YYYY-MM-DD') + 'T'
-            + this.startDateTime.hour + ':' + this.startDateTime.min + ':00.000';
-        event.end = moment(this.endDateTime.date, 'MM/DD/YYYY').format('YYYY-MM-DD') + 'T'
-            + this.endDateTime.hour + ':' + this.endDateTime.min + ':00.000';
-        var data = JSON.stringify(this.event);
+        var entity = JSON.parse(JSON.stringify(event));
+        delete entity.start;
+        entity.start = moment(event.start).format('YYYY-MM-DDTHH:mm:00.000');
+        delete entity.end;
+        entity.end = moment(event.end).format('YYYY-MM-DDTHH:mm:00.000');
+        var data = JSON.stringify(entity);
         this.service.createEvent(data).then(
             res=> {
                 this.getEventList();
                 this.addingEvent = false;
-                this.event = JSON.parse(JSON.stringify(this.initEvent));
+                this.event.init();
             },
             error => {
             }

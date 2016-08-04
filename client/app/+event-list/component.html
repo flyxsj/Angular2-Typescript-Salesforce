@@ -6,8 +6,8 @@
         <form (submit)="createEvent();">
           <md-input name="title" maxLength="200" type="text" placeholder="Event Title" (input)="eventFormErrorText = ''" [(ngModel)]="event.title"></md-input>
           <div class="clearfix cols-2">
-            <my-date-time-input [labelText]="startDTInfo.label" [selectedDate]="startDTInfo.date" [selectedHour]="startDTInfo.hour" [selectedMin]="startDTInfo.min" (dateTimeChanged)="dateTimeChanged($event,'start');"></my-date-time-input>
-            <my-date-time-input [labelText]="endDTInfo.label" [selectedDate]="endDTInfo.date" [selectedHour]="endDTInfo.hour" [selectedMin]="endDTInfo.min" (dateTimeChanged)="dateTimeChanged($event,'end');"></my-date-time-input>
+            <my-date-time-input [labelText]="'Start: '" [selectedDate]="getDateTimePartText(event.start,'date')" [selectedHour]="getDateTimePartText(event.start,'hour')" [selectedMin]="getDateTimePartText(event.start,'min')" (dateTimeChanged)="dateTimeChanged($event,'start');"></my-date-time-input>
+            <my-date-time-input [labelText]="'End :'" [selectedDate]="getDateTimePartText(event.end,'date')" [selectedHour]="getDateTimePartText(event.end,'hour')" [selectedMin]="getDateTimePartText(event.end,'min')" (dateTimeChanged)="dateTimeChanged($event,'end');"></my-date-time-input>
           </div>
 
           <div class="clearfix cols-2">
@@ -30,7 +30,7 @@
         <p [style.visibility]="eventFormErrorText.length > 0 ?'visible':'hidden'">{{eventFormErrorText}}</p>
       </md-card-content>
       <md-card-actions align="end">
-        <button md-raised-button class="btn-cancel" (click)="addingEvent = false;">CANCEL</button>
+        <button md-raised-button class="btn-cancel" (click)="cancelAddingEvent();">CANCEL</button>
         <button md-raised-button color="accent" (click)="createEvent();" type="submit">CREATE</button>
       </md-card-actions>
     </md-card>

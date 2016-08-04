@@ -292,12 +292,12 @@ router.post('/rest/event/registerSession', function registerSession(req, res, ne
 
 router.post('/rest/attendee/create', function createAttendee(req, res, next) {
     var event = nforce.createSObject('MineEntry__Attendee__c');
-    event.set('MineEntry__FirstName__c', req.body.FirstName);
-    event.set('MineEntry__LastName__c', req.body.LastName);
-    event.set('MineEntry__EventId__c', req.body.EventId);
-    event.set('MineEntry__Email__c', req.body.Email);
-    event.set('MineEntry__Phone__c', req.body.Phone);
-    event.set('MineEntry__Company__c', req.body.Company);
+    event.set('MineEntry__FirstName__c', req.body.firstName);
+    event.set('MineEntry__LastName__c', req.body.lastName);
+    event.set('MineEntry__EventId__c', req.body.eventId);
+    event.set('MineEntry__Email__c', req.body.email);
+    event.set('MineEntry__Phone__c', req.body.phone);
+    event.set('MineEntry__Company__c', req.body.company);
     org.insert({sobject: event})
         .then(
             function (response) {
@@ -333,13 +333,13 @@ router.get('/rest/attendee/delete', function (req, res, next) {
 
 router.post('/rest/session/create', function createSession(req, res, next) {
     var s = nforce.createSObject('MineEntry__Session__c');
-    s.set('MineEntry__Title__c', req.body.Title);
-    s.set('MineEntry__Status__c', req.body.Status);
-    s.set('MineEntry__Start__c', req.body.Start);
-    s.set('MineEntry__End__c', req.body.End);
-    s.set('MineEntry__RegLimit__c', req.body.RegLimit);
-    s.set('MineEntry__RemainingSeats__c', req.body.RemainingSeats);
-    s.set('MineEntry__EventId__c', req.body.EventId);
+    s.set('MineEntry__Title__c', req.body.title);
+    s.set('MineEntry__Status__c', req.body.status);
+    s.set('MineEntry__Start__c', req.body.start);
+    s.set('MineEntry__End__c', req.body.end);
+    s.set('MineEntry__RegLimit__c', req.body.limit);
+    s.set('MineEntry__RemainingSeats__c', req.body.seats);
+    s.set('MineEntry__EventId__c', req.body.eventId);
     org.insert({sobject: s})
         .then(
             function (response) {

@@ -29,6 +29,9 @@ export class HttpClient {
                     if (body.code == 'error') {
                         let error = {code: 'error', message: body.message};
                         return Promise.reject(error);
+                    } else if (body.code == 'timeout') {
+                        let error = {code: 'timeout', message: 'Your session timeout. Please login again.'};
+                        return Promise.reject(error);
                     }
                 }
                 return data;
@@ -40,6 +43,9 @@ export class HttpClient {
                 if (!options || !options.doNotShowCommonError) {
                     //TODO need to improve UI to show it with better user experience
                     alert(errorMsg);
+                    if (error && error.code == 'timeout') {
+                        window.location.href = '/';
+                    }
                 }
                 return Promise.reject(errorMsg);
             });
@@ -60,6 +66,9 @@ export class HttpClient {
                     if (body.code == 'error') {
                         let error = {code: 'error', message: body.message};
                         return Promise.reject(error);
+                    } else if (body.code == 'timeout') {
+                        let error = {code: 'timeout', message: 'Your session timeout. Please login again.'};
+                        return Promise.reject(error);
                     }
                 }
                 return data;
@@ -71,6 +80,9 @@ export class HttpClient {
                 if (!options || !options.doNotShowCommonError) {
                     //TODO need to improve UI to show it with better user experience
                     alert(errorMsg);
+                    if (error && error.code == 'timeout') {
+                        window.location.href = '/';
+                    }
                 }
                 return Promise.reject(errorMsg);
             });
@@ -89,33 +101,5 @@ export class HttpClient {
         return this.http.post(url, data, {
             headers: headers
         });
-    }
-
-    getWithObservable(url, options?:any):Observable<any> {
-        let headers = new Headers();
-        return this.http.get(url, {
-                headers: headers
-            })
-            .map(res => {
-                let body = res.json();
-                let data = body;
-                if (body && body.code) {
-                    data = body.data;
-                    if (body.code == 'error') {
-                        let error = {code: 'error', message: body.message};
-                        return Observable.throw(error);
-                    }
-                }
-                return data;
-            })
-            .catch(error=> {
-                let errorMsg = (error.message) ? error.message :
-                    error.status ? `${error.status} - ${error.statusText}` : DEFAULT_ERROR_TEXT;
-                console.error(errorMsg);
-                if (options && !options.doNotShowCommonError) {
-                    alert(errorMsg);
-                }
-                return Observable.throw(errorMsg);
-            });
     }
 }
