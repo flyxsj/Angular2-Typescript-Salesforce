@@ -1,7 +1,5 @@
-import IBaseInfo from "./BaseInfo.interface";
-import {BaseInfo} from "./BaseInfo";
-import IBaseInfo from "./BaseInfo.interface";
-var moment = require('moment');
+import IBaseInfo from './BaseInfo.interface';
+import {BaseInfo} from './BaseInfo';
 
 /**
  * Created by Steven

@@ -14,7 +14,7 @@ module.exports = function makeWebpackConfig() {
     var config = {};
 
     if (isProd) {
-        config.devtool = 'source-map';
+        //config.devtool = 'source-map';
     } else {
         config.devtool = 'eval-source-map';
     }
@@ -30,8 +30,10 @@ module.exports = function makeWebpackConfig() {
     config.output = isTest ? {} : {
         path: root('public'),
         publicPath: isProd ? '/' : 'http://localhost:3000/',
-        filename: isProd ? 'js/[name].[hash].js' : 'js/[name].js',
-        chunkFilename: isProd ? '[id].[hash].chunk.js' : '[id].chunk.js'
+        //filename: isProd ? 'js/[name].[hash].js' : 'js/[name].js',
+        //chunkFilename: isProd ? '[id].[hash].chunk.js' : '[id].chunk.js'
+        filename: 'js/[name].js',
+        chunkFilename: '[id].chunk.js'
     };
 
     config.resolve = {
@@ -62,11 +64,10 @@ module.exports = function makeWebpackConfig() {
                 loader: isTest ? 'null' : ExtractTextPlugin.extract('style', 'css?sourceMap!postcss')
             },
             {test: /\.css$/, include: root('client', 'app'), loader: 'raw!postcss'},
-
             {
-                test: /\.scss$/,
-                exclude: root('client', 'app'),
-                loader: isTest ? 'null' : ExtractTextPlugin.extract('style', 'css?sourceMap!postcss!sass')
+                test: /\.scss/,
+                include: root('client', 'style'),
+                loader: 'style!css!sass'
             },
             {test: /\.scss$/, exclude: root('client', 'style'), loader: 'raw!postcss!sass'},
 
@@ -122,7 +123,7 @@ module.exports = function makeWebpackConfig() {
 
             // Reference: http://webpack.github.io/docs/list-of-plugins.html#uglifyjsplugin
             // Minify all javascript, switch loaders to minimizing mode
-            new webpack.optimize.UglifyJsPlugin(),
+            new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}}),
 
             // Copy assets from the public folder
             // Reference: https://github.com/kevlened/copy-webpack-plugin
@@ -131,11 +132,6 @@ module.exports = function makeWebpackConfig() {
             }])
         );
     }
-    config.postcss = [
-        autoprefixer({
-            browsers: ['last 2 version']
-        })
-    ];
 
     config.sassLoader = {};
 

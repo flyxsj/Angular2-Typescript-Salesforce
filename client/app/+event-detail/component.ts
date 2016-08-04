@@ -189,6 +189,7 @@ export class EventDetailComponent implements OnInit,AfterViewInit {
     }
 
     showCreatingAttendee():void {
+        this.newAttendee.init();
         this.creatingAttendee = true;
     }
 
