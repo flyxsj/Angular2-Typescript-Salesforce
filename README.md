@@ -1,5 +1,3 @@
-# steven-entry
-Just for entry test
 
 Before run it, need to install all nodejs related packages such as npm etc...
 
